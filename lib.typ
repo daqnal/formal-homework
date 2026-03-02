@@ -38,7 +38,7 @@
 #let hw(
   title_text: none,
   number: 1, 
-  author: "George P. Burdell", 
+  author: none, 
   class: none, 
   due_date: none, 
   body,
