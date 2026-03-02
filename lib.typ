@@ -21,10 +21,14 @@
 ]
 
 #let a(body) = [
-  #box(
-    width: 1fr,
-    stroke: black,
-    inset: 1em,
+  #block(
+    width: 100%,
+    // In the future, these should be optional arguments 
+    // fill: none,
+    // radius: 0pt,
+    inset: 10pt,
+    stroke: 1pt + black,
+    breakable: true,
   )[#body]
 ]
 
@@ -32,11 +36,12 @@
 
 
 #let hw(
-  author: "George Burdell", 
-  class: "GT 1000", 
+  title_text: none,
   number: 1, 
-  due_date: "January 1, 1970", 
-  body
+  author: "George P. Burdell", 
+  class: none, 
+  due_date: none, 
+  body,
 ) = {
 
   counter(page).update(0)
@@ -71,13 +76,17 @@
 
 
   align(horizon + center, block[
-    #title[Homework #number Submission]
+    #if title_text != none [
+      #title[#title_text]
+    ] else [
+      #title[Homework #number Submission]
+    ]
 
-    #class
+    #if class != none [#class]
 
-    #author
+    #if author != none [#author]
 
-    #due_date
+    #if due_date != none [#due_date]
   ])
 
 
