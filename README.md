@@ -14,9 +14,13 @@ First, create a new `.typ` file and import this package at the top:
 The entirety of the homework portion of your document will be contained in `hw()[]`, including the title page. Call it and pass the following (optional) parameters:
 
 - `title_text` -> Text to be used as title of document
+
 - `number` -> Number of the homework, only used if `title_text` is omitted
+
 - `author` -> Your name
+
 - `class` -> Name of the class/course that the homework is for
+
 - `due_date` -> Date that the homework is due
 
 ```typst
@@ -32,13 +36,15 @@ The entirety of the homework portion of your document will be contained in `hw()
 
 ![Title page example](images/title.png)
 
+New Computer Modern is the default font, aiming for semblance to vanilla LaTeX, which professors likely prefer. To revert it, insert `#set text(font: "libertinus serif")` into the body of `#hw()[]`.
+
 The content of the document is laid out with the remaining macros: `#q[]`, `#a[]`, and `#br()`
 
 `#q[]` -> Contains the question, automatically enumerated
 `#a[]` -> Contains the answer, bordered with a black box
 `#br()` -> Shortcut for `#pagebreak()`, may be used to keep questions on their own page
 
-Note that `#q[]`s may embed `#a[]`, which is often useful for multi-part questions. Examples are provided below.
+Note that `#q[]`s may embed `#a[]`, which is often useful for multi-part questions. An exhaustive example is provided below.
 
 ```typst
 
@@ -130,4 +136,3 @@ Note that `#q[]`s may embed `#a[]`, which is often useful for multi-part questio
 
 ![Proof page 1 example](images/proof1.png) ![Proof page 2 example](images/proof2.png) ![Subquestions example](images/subquestions.png)
 
-New Computer Modern is the default font, aiming for semblance to vanilla LaTeX, which professors likely prefer. To revert it, insert `#set text(font: "libertinus serif")` into the body of `#hw()[]`.
