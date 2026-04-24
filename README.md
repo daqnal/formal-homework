@@ -8,29 +8,36 @@
 First, create a new `.typ` file and import this package at the top:
 
 ```typst
-#import "@preview/formal-homework:0.1.0": hw, q, a, br
+#import "@preview/formal-homework:0.1.1": hw, q, a, br
 ```
 
-The entirety of the homework portion of your document will be contained in `hw()[]`, including the title page. Call it and pass the following (optional) parameters:
+The entirety of the homework portion of your document will be contained in `#hw()[]`, including the title page. Call it and pass the following (optional) parameters:
 
-- `title-text` -> Text to be used as title of document
+- `title-text` -> Text to be used as title of document (str)
 
-- `number` -> Number of the homework, only used if `title_text` is omitted
+- `number` -> Number of the homework, only used if `title_text` is omitted (int)
 
-- `author` -> Your name
+- `author` -> Your name (str)
 
-- `class` -> Name of the class/course that the homework is for
+- `class` -> Name and/or code of the course that the homework is for (str)
+
+- `institution` -> Institute you represent, or are submitting to (str)
+
+- `professor` -> Name of the class professor (str)
 
 - `due-date` -> Date that the homework is due
 
 ```typst
 #hw(
-  number: 5,
-  author: "George P. Burdell",
-  class: "CS 2050",
-  due-date: "January 1, 1970"
+  number: 8,
+  author: "George Burdell",
+  institution: "Georgia Institute of Technology",
+  class: "CS 2050: Discrete Mathematics",
+  due-date: "December 1, 1970",
+  answer-color: rgb("#0E0E97"),
+  answer-background-fill: true,
 )[
-    Your content goes here.
+  Your homework goes here
 ]
 ```
 
@@ -44,94 +51,119 @@ The content of the document is laid out with the remaining macros: `#q[]`, `#a[]
 `#a[]` -> Contains the answer, bordered with a black box
 `#br()` -> Shortcut for `#pagebreak()`, may be used to keep questions on their own page
 
-Note that `#q[]`s may embed `#a[]`, which is often useful for multi-part questions. An exhaustive example is provided below.
+Note that `#q[]`s may embed `#a[]`, which is often useful for multi-part questions. Ensure that embedded `#a[]`s are indented, otherwise the enumeration will be reset.
+
+An example showcasing most features is provided below.
 
 ```typst
+  #q[
+    Let $n$ be a positive integer. Prove that if 9 divides $n$, then 9 divides the sum of the digits of $n$ (in base 10).
+  ]
 
-#q[
-    Let $f: ZZ^+ times ZZ^+ -> ZZ^+$ such that $f(m,n) = 2^(m - 1) (2n - 1)$. Prove that $f$ is bijective.
-]
+  #a[
 
-#a[
-    *Lemma:* #h(0.5em) We proceed directly to show that the product of an even integer and an odd integer is an even integer.
+    *Lemma:* We proceed directly to show that $9$ divides $10^n - 1$, where $n$ is an integer.
 
-    Let $x$ be an odd integer. By definition of odd integer, $x = 2k + 1$ for some integer $k$. Let $y$ be an even integer. By definition of even integer, $y = 2j$ for some integer $j$. We show that the product of $x$ and $y$ is even.
-
-    $
-    x y &= (2k + 1)(2j) \
-    &= 4 k j + 2 j \
-    &= 2 (2 k j + j) \
-    $
-
-    Since integers are closed under multiplication and addition, the expression $2 k j + j$ is an integer. Let that expression be assigned the variable $z$. Since $x y = 2z$, the product of $x$ and $y$ is an even integer. Therefore, the product of an even integer and an odd integer is an even integer. #sym.qed
-
-    *Proof:* #h(0.5em) We proceed directly to show that the function $f: ZZ^+ times ZZ^+ -> ZZ^+$ such that $f(m, n) = 2^(m - 1) (2n - 1)$ is bijective.
-
-    Let $f: ZZ^+ times ZZ^+ -> ZZ^+$ such that $f(m, n) = 2^(m - 1) (2n - 1)$. To show that $f$ is bijective, we must show injectivity and surjectivity.
-
-    *Injectivity Proof:* #h(0.5em) To show that $f$ is injective, we show that if $f(a,b) = f(c,d)$ for arbitrary $(a,b), (c,d) in (ZZ^+ times ZZ^+)$, then $(a,b) = (c,d)$.
-
-    Assume that for arbitrary $(a,b), (c,d) in (ZZ^+ times ZZ^+)$, $f(a,b) = f(c,d)$.
-
-    $ 
-    f(a,b) &= 2^(a - 1) (2b - 1) \
-    f(c,d) &= 2^(c - 1) (2d - 1) \
-    $
-    $
-    &=> 2^(a - 1) (2b - 1) = 2^(c - 1) (2d - 1) \
-    &= 2^(a - c) (2b - 1) = 2d - 1 \
-    $
-
-    By Lemma, the product of an even integer and a positive integer is an even integer. Since $2b - 1$ and $2d - 1$ are odd integers, $2^(a - c)$ cannot be even. If $2^(a - c)$ was even, then $2d - 1$ would be even by Lemma, which is a contradiction. Thus, $2^(a - c)$ must be odd, and the only power of two that is odd is $2^0 = 1$. It follows that $2^(a - c) = 2^0$, so $a = c$. 
-
-    Since $a = c$, we plug $a$ back into $f(a,b) = f(c,d)$ for $c$.
+    We begin with the statement $10 equiv 1$ (mod 9). By the property of the compatibility of modular congruence under multiplication, this statement is equivalent to $10^n equiv 1^n$ (mod 9) for any $n in ZZ$. Since 1 to any power is 1, we get the following congruence:
 
     $
-    2^(a - 1) (2b - 1) &= 2^(a - 1) (2d - 1) \
-    2b - 1 &= 2d - 1 \
-    2b &= 2d \
-    b &= d
+      10^n equiv 1 "(mod 9)" \
+      10^n - 1 equiv 0 "(mod 9)" \
     $
 
-    Since $a = c$ and $b = d$, we have shown that if $f(a,b) = f(c,d)$, then $(a,c) = (c,d)$. Therefore, $f$ is injective.
+    By the definition of modular congruence, this congruence is equivalent to $9 | 10^n - 1$.
 
-    *Surjectivity Proof:* #h(0.5em) To show that $f$ is surjective, we prove that for an arbitrary positive integer $z$, there exists an element $(x, y) in (ZZ^+ times ZZ^+)$ such that $z = f(x, y)$.
+    Therefore, we have shown that $9$ divides $10^n - 1$ for any integer $n$.
 
-    Let $z$ be an arbitrary positive integer. By the Fundamental Theorem of Arithmetic, $z$ may be uniquely written as $z = 2^p q$, where $p$ is a non-negative integer and $q$ is an odd positive integer. By the definition of odd positive integers, $q$ may be expressed as $q = 2k + 1$, where $k$ is a non-negative integer. Expressing $z$ in terms of $p$ and $k$ gives $z = 2^p (2k + 1)$. Define the variables $x = p + 1$ and $y = k + 1$. By the closure of integers under addition, $x$ and $y$ must be integers. Since $p$ and $q$ are positive, $x$ and $y$ must be positive. Therefore, $z$ may be expressed as a function of $x$ and $y$, and $(x,y)$ is an element of $ZZ^+ times ZZ^+$ by definition of Cartesian product.
+    *Proof:* We proceed directly to show that if 9 divides a positive integer $n$, then 9 divides the sum of the digits of $n$ in base 10.
 
-    Therefore, since we have shown that the function $f: ZZ^+ times ZZ^+ -> ZZ^+$ such that $f(m, n) = 2^(m - 1) (2n - 1)$ is injective and surjective, $f$ is bijective by definition of bijectivity. #sym.qed
-]
+    Assume that 9 divides $n$. By the definition of integer division, there exists an integer $a$ such that $9 a = n$. As a base 10 number, $n$ may be written in the following form:
 
-#br()
+    $
+      n = 10^0 dot n_1 + 10^1 dot n_2 + 10^2 dot n_3 + ... + 10^(k - 1) dot n_k \
+    $
 
-#q[
-    Determine whether the following sets are finite, countably infinite, or uncountably infinite. If finite, find it's cardinality. If countable, construct an injection from it to $NN $ (you do not have to prove that your function is an injection).
+    Where $k$ is the number of digits in $n$, and $n_m$ is the $m^"th"$ digit of $n$.
 
-    +  The set of all multiples of 6.
+    Simplify the powers of 10 and split:
 
-      #a[Countably infinite. For $s = 6k$, where $k in ZZ$, let $f(s) = |s| + 1$.]
+    $
+      n & = n_1 + 10 n_2 + 100 n_3 + ... + 10^(k - 1) dot n_k \
+        & = n_1 + (9 + 1) n_2 + (99 + 1) n_3 + ... + ((10^(k - 1) - 1) + 1) dot n_k \
+        & = 9 n_2 + 99 n_3 + ... + (10^(k - 1) - 1) + n_1 + n_2 + n_3 + ... + n_k \
+    $
 
-    +  The set of all even prime numbers.
+    Substitute $n$ for $9a$:
 
-      #a[Finite. The only even prime is 2; this set has a cardinality of 1.]
+    $
+      9a & = 9 n_2 + 99 n_3 + ... + (10^(k - 1) - 1) n_k + n_1 + n_2 + n_3 + ... + n_k \
+      a & = frac(9 n_2 + 99 n_3 + ... + (10^(k - 1) - 1) n_k + n_1 + n_2 + n_3 + ... + n_k, 9) \
+      & = frac(9 n_2 + 99 n_3 + ... + (10^(k - 1) - 1) n_k, 9) + frac(n_1 + n_2 + n_3 + ... + n_k, 9) \
+      & = n_2 + 11 n_3 + ... + frac(10^(k - 1) - 1, 9) n_k + frac(n_1 + n_2 + n_3 + ... + n_k, 9) \
+    $
 
-    +  The set of finite binary strings. Note: a binary string consists of $0 $s and $1 $s, for example: $1 0 1 1 $ and $0 0 1 0 0 0 0 1 1 $ are binary strings.
+    By Lemma, $frac(10^(k - 1) - 1, 9)$ is an integer since $k - 1$ is an integer. Note that $a$ is an integer, and $n_2 + 11 n_3 + ... + frac((10^(k - 1) - 1), 9) n_k$ is an integer. Thus, the remaining term must be an integer to preserve the closure of integers under addition.
 
-      #a[Countably infinite. Let $f$ be a function that takes a binary string as input and outputs the base 10 conversion of a 1 followed by the binary string. ]
+    $ frac(n_1 + n_2 + n_3 + ... + n_k, 9) in ZZ $
 
-    +  The set of all infinite binary strings.
+    By the definition of integer division, 9 must divide $n_1 + n_2 + n_3 + ... + n_k$. Note that $n_1 + n_2 + n_3 + ... + n_k$ is the sum of the digits of $n$. Thus, 9 divides the sum of the digits of $n$.
 
-      #a[Uncountably infinite.]
+    Therefore, we have shown that if 9 divides a positive integer $n$, then 9 divides the sum of the digits of $n$ in base 10. #sym.qed
+  ]
 
-    +  The set of all real numbers between $e $ and $pi $ (inclusive).
+  #br()
 
-      #a[Uncountably infinite.]
+  #q[
+    Convert the following numbers into the given base. Show your work.
 
-    +  The set of all integers between $e $ and $pi $ (inclusive).
+    + $(35)_7$ to base 10
 
-      #a[Finite. This set has a cardinality of 1, with its only element being 3.]
+      #a[
+        $
+          (35)_7 & = 5 dot 7^0 + 3 dot 7^1 \
+                 & = 5 + 21 \
+                 & = (26)_10
+        $
+      ]
 
-]
+    + $(55)_10$ to base 8
+
+      #a[
+        $
+          (55) & = 5 dot 10^0 + 5 dot 10^1 \
+               & = 5 + 50 \
+               & = 5 dot 8^0 + 2 dot 8^0 + 6 dot 8^1 \
+               & = (67)_8 \
+        $
+      ]
+
+    + $(2 F 51)_16$ to base 8
+
+      #a[
+        $
+          (2 F 51)_16 = 1 dot 16^0 + 5 dot 16^1 + F dot 16^2 + 2 dot 16^3 \
+          2_16 = 0010_2 \
+          F_16 = 1111_2 \
+          5_16 = 0101_2 \
+          1_16 = 0001_2 \
+        $
+        $
+          (2 F 51)_16 & = ("0010 1111 0101 0001")_2 \
+                      & = ("010 111 101 010 001")_2 \
+                      & = (2 7 5 2 1)_8 \
+        $
+      ]
+
+    + $(2610)_8$ to base 16
+
+      #a[
+        $
+          (2610)_8 & = 1 dot 8^1 + 6 dot 8^2 + 2 dot 8^3 \
+                   & = ("010 110 001 000")_2 \
+                   & = (588)_16
+        $
+      ]
+  ]
 ```
 
 ![Proof page 1 example](images/proof1.png) ![Proof page 2 example](images/proof2.png) ![Subquestions example](images/subquestions.png)
