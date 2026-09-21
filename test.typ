@@ -8,6 +8,7 @@
   due-date: "December 1, 1970",
   answer-color: rgb("#0E0E97"),
   answer-background-fill: true,
+  q-numbering: "hierarchical",
 )[
 
   #q[
@@ -51,9 +52,9 @@
 
     $
       9a & = 9 n_2 + 99 n_3 + ... + (10^(k - 1) - 1) n_k + n_1 + n_2 + n_3 + ... + n_k \
-      a & = frac(9 n_2 + 99 n_3 + ... + (10^(k - 1) - 1) n_k + n_1 + n_2 + n_3 + ... + n_k, 9) \
-      & = frac(9 n_2 + 99 n_3 + ... + (10^(k - 1) - 1) n_k, 9) + frac(n_1 + n_2 + n_3 + ... + n_k, 9) \
-      & = n_2 + 11 n_3 + ... + frac(10^(k - 1) - 1, 9) n_k + frac(n_1 + n_2 + n_3 + ... + n_k, 9) \
+       a & = frac(9 n_2 + 99 n_3 + ... + (10^(k - 1) - 1) n_k + n_1 + n_2 + n_3 + ... + n_k, 9) \
+         & = frac(9 n_2 + 99 n_3 + ... + (10^(k - 1) - 1) n_k, 9) + frac(n_1 + n_2 + n_3 + ... + n_k, 9) \
+         & = n_2 + 11 n_3 + ... + frac(10^(k - 1) - 1, 9) n_k + frac(n_1 + n_2 + n_3 + ... + n_k, 9) \
     $
 
     By Lemma, $frac(10^(k - 1) - 1, 9)$ is an integer since $k - 1$ is an integer. Note that $a$ is an integer, and $n_2 + 11 n_3 + ... + frac((10^(k - 1) - 1), 9) n_k$ is an integer. Thus, the remaining term must be an integer to preserve the closure of integers under addition.
@@ -70,7 +71,7 @@
   #q[
     Convert the following numbers into the given base. Show your work.
 
-    + $(35)_7$ to base 10
+    #q[ $(35)_7$ to base 10
 
       #a[
         $
@@ -79,8 +80,9 @@
                  & = (26)_10
         $
       ]
-
-    + $(55)_10$ to base 8
+    ]
+    #q[
+      $(55)_10$ to base 8
 
       #a[
         $
@@ -90,8 +92,9 @@
                & = (67)_8 \
         $
       ]
-
-    + $(2 F 51)_16$ to base 8
+    ]
+    #q[
+      $(2 F 51)_16$ to base 8
 
       #a[
         $
@@ -108,7 +111,9 @@
         $
       ]
 
-    + $(2610)_8$ to base 16
+    ]
+    #q[
+      $(2610)_8$ to base 16
 
       #a[
         $
@@ -117,5 +122,6 @@
                    & = (588)_16
         $
       ]
+    ]
   ]
 ]

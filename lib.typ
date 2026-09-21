@@ -2,25 +2,51 @@
 
 #let enum-offset = state("offset", 0)
 
+#let q-depth = state("q-depth", 0)
 #let q-counter = counter("q")
+#let q-mode = state("q-mode", "local")
 
 #let q(body) = [
-  // Reset custom enumeration to account for title page
-  #q-counter.step()
-  #enum-offset.update(1)
+  #q-depth.update(d => d + 1)
 
-  // Enumeration should continue between and within questions and answers
   #context {
-    let num = q-counter.display("1.")
+    let depth = q-depth.get()
+    q-counter.step(level: depth)
+  }
 
-    // Adjust manual enumeration spacing to match standard "+" syntax enumeration
+  #context {
+    let depth = q-depth.get()
+    let mode = q-mode.get()
+    let nums = q-counter.get()
+
+    let num = if mode == "hierarchical" {
+      // Full path: 1, 1.1, 1.2, 2.1, …
+      // (you can change the pattern string if you prefer 1.1. or 1-1 etc.)
+      numbering("1.1", ..nums)
+    } else {
+      // Local style only (original behaviour)
+      let style-idx = calc.min(depth - 1, styles.len() - 1)
+      numbering(styles.at(style-idx), nums.at(depth - 1))
+    }
+
+    // Make any + lists inside this q start at the next style
+    enum-offset.update(depth)
+
+    // Slightly wider box when hierarchical numbers are longer
+    let box-w = if mode == "hierarchical" { 2.2em } else { 1.2em }
+
     block(width: 100%, above: 0.75em, below: 1em)[
-      #place(left)[#box(width: 0.5em, align(right, num))]
-      #pad(left: 1.3em, body)
+      #place(left)[
+        #box(width: box-w, align(right, num))
+      ]
+      #pad(left: box-w + 0.6em, body)
     ]
   }
 
-  #enum-offset.update(0)
+  #q-depth.update(d => d - 1)
+  #context {
+    enum-offset.update(q-depth.get())
+  }
 ]
 
 
@@ -47,6 +73,7 @@
   answer-background-fill: false,
   show-page-footer: true,
   show-problem-footer: true,
+  q-numbering: "local",
   body,
 ) = {
   set page(
@@ -59,7 +86,10 @@
           columns: (1fr, 1fr),
           if show-problem-footer {
             align(left)[
-              Problem #q-counter.display()
+              Problem #context {
+                let n = q-counter.get()
+                if n.len() > 0 { numbering("1", n.first()) } else { "1." }
+              }
             ]
           },
           if show-page-footer {
@@ -71,6 +101,8 @@
       }
     },
   )
+
+  let hr() = line(length: 100%, stroke: answer-color)
 
   set text(
     size: 12pt,
@@ -124,6 +156,8 @@
 
     #due-date
   ])
+
+  q-mode.update(q-numbering)
 
   pagebreak()
 
