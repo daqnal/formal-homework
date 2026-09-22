@@ -6,6 +6,8 @@
 #let q-counter = counter("q")
 #let q-mode = state("q-mode", "local")
 
+#let answer-color-state = state("answer-color", black)
+
 #let q(body) = [
   #q-depth.update(d => d + 1)
 
@@ -20,27 +22,27 @@
     let nums = q-counter.get()
 
     let num = if mode == "hierarchical" {
-      // Full path: 1, 1.1, 1.2, 2.1, …
-      // (you can change the pattern string if you prefer 1.1. or 1-1 etc.)
-      numbering("1.1", ..nums)
+      if nums.len() == 1 {
+        numbering("1.", ..nums)
+      } else {
+        numbering("1.1", ..nums)
+      }
     } else {
-      // Local style only (original behaviour)
       let style-idx = calc.min(depth - 1, styles.len() - 1)
       numbering(styles.at(style-idx), nums.at(depth - 1))
     }
 
-    // Make any + lists inside this q start at the next style
     enum-offset.update(depth)
 
-    // Slightly wider box when hierarchical numbers are longer
-    let box-w = if mode == "hierarchical" { 2.2em } else { 1.2em }
+    let nest = (depth - 1) * 1.5em
+    let num-w = measure(num).width
 
-    block(width: 100%, above: 0.75em, below: 1em)[
-      #place(left)[
-        #box(width: box-w, align(right, num))
-      ]
-      #pad(left: box-w + 0.6em, body)
-    ]
+    set par(first-line-indent: 0pt, hanging-indent: num-w + nest + 0.35em)
+
+    h(nest)
+    num
+
+    body
   }
 
   #q-depth.update(d => d - 1)
@@ -60,8 +62,11 @@
 
 #let br() = pagebreak()
 
+#let hr() = context { line(length: 100%, stroke: answer-color-state.get()) }
+
 
 #let hw(
+  show-title-page: true,
   title-text: none,
   number: 1,
   author: none,
@@ -71,17 +76,19 @@
   due-date: none,
   answer-color: black,
   answer-background-fill: false,
-  show-page-footer: true,
+  show-page-number: true,
   show-problem-footer: true,
   q-numbering: "local",
   body,
 ) = {
+  answer-color-state.update(answer-color)
+
   set page(
     paper: "us-letter",
     margin: 1in,
     footer: context {
       // Display page/problem counter after title page if enabled
-      if counter(page).get().first() > 1 {
+      if (counter(page).get().first() > 1) or (not show-title-page) {
         grid(
           columns: (1fr, 1fr),
           if show-problem-footer {
@@ -92,7 +99,7 @@
               }
             ]
           },
-          if show-page-footer {
+          if show-page-number {
             align(right)[
               #counter(page).display()
             ]
@@ -101,8 +108,6 @@
       }
     },
   )
-
-  let hr() = line(length: 100%, stroke: answer-color)
 
   set text(
     size: 12pt,
@@ -121,8 +126,11 @@
   )
 
   // Set the answer text and border to have answer-color
-  show block.where(label: <hw-answer>): it => {
-    block(
+  show block.where(label: <hw-answer>): it => context {
+    let depth = q-depth.get()
+    let indent = (depth - 1) * 1.5em
+
+    pad(left: indent, block(
       width: 100%,
       inset: 10pt,
       stroke: 1pt + answer-color,
@@ -132,34 +140,36 @@
         none
       },
       it,
-    )
+    ))
   }
 
   show label("hw-answer"): set text(fill: answer-color)
 
-  // Style title page to (somewhat) follow APA style
-  align(horizon + center, block[
-    // If title-text is set, then use it instead of "Homework # Submission"
-    #if title-text != none [
-      #title[#title-text]
-    ] else [
-      #title[Homework #number Submission]
-    ]
+  if (show-title-page) {
+    // Style title page to (somewhat) follow APA style
+    align(horizon + center, block[
+      // If title-text is set, then use it instead of "Homework # Submission"
+      #if title-text != none [
+        #title[#title-text]
+      ] else [
+        #title[Homework #number Submission]
+      ]
 
-    #author
+      #author
 
-    #institution
+      #institution
 
-    #class
+      #class
 
-    #professor
+      #professor
 
-    #due-date
-  ])
+      #due-date
+    ])
 
-  q-mode.update(q-numbering)
+    q-mode.update(q-numbering)
 
-  pagebreak()
+    pagebreak()
+  }
 
   body
 }
